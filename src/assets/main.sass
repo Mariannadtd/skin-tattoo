@@ -1,0 +1,895 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Montserrat:wght@400;500;600;700;800;900&display=swap')
+@import './base.css'
+@import './variables'
+
+*
+  box-sizing: border-box
+
+html
+  scroll-behavior: smooth
+  overflow-x: hidden
+  font-size: 62.5%
+
+body
+  margin: 0
+  background: $bg
+  color: $text
+  font-family: $font-body
+  font-size: $fs-md
+  line-height: 1.4
+  min-width: 32rem
+  overflow-x: hidden
+  overflow-y: auto
+
+button,
+input,
+textarea,
+select
+  font: inherit
+
+img
+  display: block
+  width: 100%
+
+a
+  color: inherit
+
+button
+  cursor: pointer
+  border: 0
+  background: transparent
+
+ul,
+ol
+  margin: 0
+  padding: 0
+  list-style: none
+
+figure
+  margin: 0
+
+fieldset
+  margin: 0
+  padding: 0
+  border: 0
+  min-width: 0
+
+legend
+  padding: 0
+
+address
+  font-style: normal
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.section-title,
+.section-subtitle,
+.founder__title,
+.founder__bottom,
+.certs__title,
+.footer__right h2,
+.promo__card h2
+  font-family: $font-heading
+
+.container
+  width: min(182rem, calc(100% - 9.6rem))
+  margin: 0 auto
+
+.page
+  overflow-x: clip
+
+
+.section-title
+  margin: 0
+  font-size: clamp(5.6rem, 7vw, 15rem)
+  line-height: .83
+  letter-spacing: -.06em
+  font-weight: 900
+
+  &--huge
+    margin-bottom: 3.4rem
+
+  &--form
+    margin-bottom: 4.4rem
+    text-align: right
+
+.section-subtitle
+  margin: 0 0 1.8rem
+  font-size: clamp(3.4rem, 3vw, 6.6rem)
+  line-height: .95
+  font-weight: 500
+
+  &--center
+    text-align: center
+    margin-bottom: 5rem
+
+
+
+.booking
+  padding-bottom: 8.6rem
+  background: #fff
+
+  &__grid
+    display: grid
+    grid-template-columns: 30% 45%
+    justify-content: center
+    align-items: center
+    gap: 8.6rem
+
+  &__dragon
+    img
+      max-width: 38rem
+      margin: 0 auto
+
+  &__form
+    border: $border
+    padding: 2.8rem 2.8rem 3.4rem
+    background: var(--card)
+
+  &__fieldset
+    margin-bottom: $space-md
+
+  &__radio-group
+    display: flex
+    flex-wrap: wrap
+    gap: 1.8rem 3.6rem
+    margin: 1.6rem 0 2.2rem
+
+    label
+      display: inline-flex
+      align-items: center
+      gap: 1rem
+      font-size: $fs-xs
+      font-family: $font-body
+
+    input
+      appearance: none
+      width: 1.2rem
+      height: 1.2rem
+      border: $border
+      border-radius: $radius-full
+      position: relative
+
+      &:checked::after
+        content: ''
+        position: absolute
+        inset: 0.2rem
+        border-radius: $radius-full
+        background: $text
+
+  &__avatars
+    display: grid
+    grid-template-columns: repeat(4, 1fr)
+    gap: $space-lg
+    margin-bottom: 2.6rem
+
+    div
+      text-align: center
+      font-size: $fs-2xs
+      position: relative
+      padding-top: 4.4rem
+      font-family: $font-body
+
+      &::before
+        content: ''
+        position: absolute
+        left: 50%
+        top: 0
+        transform: translateX(-50%)
+        width: 3.4rem
+        height: 3.4rem
+        border-radius: $radius-full
+        border: $border
+        background: linear-gradient(135deg, #ddd, #999)
+
+  &__bottom
+    display: flex
+    align-items: center
+    justify-content: space-between
+    gap: $space-xl
+    margin-top: 2.4rem
+
+    strong
+      font-size: clamp(3.6rem, 3vw, 5.6rem)
+      line-height: 1
+      font-weight: 800
+      font-family: $font-heading
+
+.field-select
+  min-height: 5.8rem
+  border: $border
+  display: flex
+  align-items: center
+  justify-content: space-between
+  padding: 0 1.8rem
+  font-size: $fs-md
+  line-height: 1
+  position: relative
+  width: 100%
+  font-family: $font-heading
+
+  &::after
+    content: '⌄'
+    font-size: $fs-lg
+
+.calendar-box
+  width: 30rem
+  border: $border
+  padding: 1.4rem
+  margin: 1.8rem 0 2.4rem
+
+  &__head
+    display: flex
+    justify-content: space-between
+    align-items: center
+    font-size: $fs-xs
+    margin-bottom: 1.4rem
+    font-family: $font-body
+
+  &__grid
+    display: grid
+    grid-template-columns: repeat(7, 1fr)
+    gap: 0.9rem
+
+    span
+      width: 100%
+      aspect-ratio: 1
+      display: flex
+      align-items: center
+      justify-content: center
+      font-size: 1.1rem
+      border-radius: $radius-full
+      font-family: $font-body
+
+.promo
+  padding-bottom: 9.2rem
+  overflow-x: hidden
+
+  &__inner
+    position: relative
+    min-height: 0
+    display: grid
+    grid-template-columns: 58% 42%
+    align-items: start
+    width: 100vw
+    margin-left: calc(50% - 50vw)
+
+  &__image
+    width: 100%
+    border: $border
+
+    img
+      aspect-ratio: 760 / 630
+      object-fit: cover
+      object-position: center
+
+  &__card
+    position: absolute
+    left: calc(58% - 5.6rem)
+    top: 18rem
+    width: 42rem
+    border: $border
+    background: rgba(246, 246, 246, .96)
+    padding: 3.4rem 3rem 3rem
+
+    &::before
+      content: '★'
+      position: absolute
+      left: -2.3rem
+      top: 50%
+      transform: translateY(-50%)
+      width: 4.6rem
+      height: 4.6rem
+      border-radius: $radius-full
+      border: $border
+      display: flex
+      align-items: center
+      justify-content: center
+      background: $bg
+      font-size: $fs-xl
+      font-family: $font-heading
+
+    h2
+      margin: 0 0 2.6rem
+      font-size: clamp(4.4rem, 3.6vw, 7.2rem)
+      line-height: .9
+      font-weight: 500
+
+    p
+      margin: 0 0 2.2rem
+      font-size: 1.7rem
+      line-height: 1.1
+      font-family: $font-body
+
+    strong
+      font-size: $fs-5xl
+      line-height: .9
+      font-weight: 700
+      font-family: $font-heading
+
+.certs
+  position: relative
+  min-height: 77rem
+  display: flex
+  align-items: center
+  border-top: $border
+  border-bottom: $border
+  overflow: hidden
+
+  &__bg
+    position: absolute
+    inset: 0
+
+    img
+      height: 100%
+      object-fit: cover
+
+  &__inner
+    position: relative
+    min-height: 60rem
+    z-index: 1
+
+  &__title
+    position: absolute
+    inset: 0
+    margin: auto
+    width: 70rem
+    height: 16rem
+    display: flex
+    align-items: center
+    justify-content: center
+    border: 0.1rem solid rgba(246, 246, 246, .95)
+    border-radius: $radius-full
+    color: $white
+    padding: 0 5.6rem
+    font-size: clamp(3.4rem, 3vw, 7rem)
+    font-weight: 400
+    line-height: 1
+    white-space: nowrap
+
+  &__badge
+    position: absolute
+    color: $white
+    display: flex
+    align-items: center
+    gap: 1.8rem
+
+  &__image
+    display: block
+    max-width: 22rem
+    height: auto
+    object-fit: contain
+    flex-shrink: 0
+
+  &__meta
+    display: flex
+    flex-direction: column
+    gap: 0.4rem
+
+    span
+      width: 5.8rem
+      height: 5.8rem
+      border: 0.1rem solid rgba(246, 246, 246, .85)
+      border-radius: $radius-full
+      display: flex
+      align-items: center
+      justify-content: center
+      font-size: $fs-xl
+      line-height: 1
+      opacity: .9
+      margin-bottom: 0.6rem
+      font-family: $font-heading
+
+    strong
+      font-size: clamp(3.8rem, 3vw, 6.4rem)
+      line-height: 1
+      font-weight: 600
+      font-family: $font-heading
+
+    small
+      font-size: $fs-lg
+      line-height: 1.1
+      font-family: $font-body
+
+  &__badge--left
+    left: 9.6rem
+    top: 7.8rem
+    flex-direction: column
+    align-items: flex-start
+    gap: 1.8rem
+
+    .certs__image
+      max-width: 21rem
+
+    .certs__meta
+      padding-left: 0.4rem
+
+  &__badge--top
+    right: 8.6rem
+    top: -2.4rem
+    align-items: flex-start
+    gap: 3.4rem
+
+    .certs__image
+      order: 2
+      max-width: 25.5rem
+
+    .certs__meta
+      order: 1
+      padding-top: 1rem
+
+  &__badge--right
+    right: 15rem
+    bottom: -7rem
+    align-items: flex-end
+    gap: 2.8rem
+
+    .certs__image
+      order: 2
+      max-width: 25rem
+
+    .certs__meta
+      order: 1
+      padding-bottom: 4.6rem
+
+.reviews
+  padding: 7rem 0 8rem
+
+  &__grid
+    display: grid
+    grid-template-columns: repeat(3, 1fr)
+    gap: 0
+    align-items: center
+    max-width: 132rem
+    margin: 0 auto
+
+  &__dots
+    display: flex
+    justify-content: center
+    gap: 1rem
+    margin-top: 2.4rem
+
+    span
+      width: 0.8rem
+      height: 0.8rem
+      border-radius: $radius-full
+      background: rgba(29,57,216,.35)
+
+    .is-active
+      background: $text
+
+.review
+  min-height: 31.2rem
+  padding: 4.4rem 3.8rem 3.4rem
+  border: $border
+  background: var(--review)
+  text-align: center
+  display: flex
+  flex-direction: column
+  align-items: center
+
+  &:nth-child(2)
+    background: var(--review-active)
+    transform: scale(1.04)
+    z-index: 1
+
+  &__avatar
+    width: 4.8rem
+    height: 4.8rem
+    border-radius: $radius-full
+    overflow: hidden
+    border: 0.1rem solid rgba(246, 246, 246, .6)
+    margin-bottom: 1.4rem
+
+    img
+      height: 100%
+      object-fit: cover
+
+  strong
+    display: block
+    margin-bottom: $space-md
+    font-size: $fs-md
+    font-family: $font-heading
+    font-weight: 500
+
+  p
+    margin: 0
+    font-size: $fs-sm
+    line-height: 1.2
+    font-family: $font-body
+
+.footer
+  position: relative
+  min-height: 72rem
+  border-top: $border
+  display: flex
+  align-items: stretch
+
+  &__bg
+    position: absolute
+    inset: 0
+
+    &::after
+      content: ''
+      position: absolute
+      inset: 0
+      background: rgba(255,255,255,.08)
+
+    img
+      height: 100%
+      object-fit: cover
+      object-position: center
+
+  &__inner
+    position: relative
+    z-index: 1
+    display: grid
+    grid-template-columns: 18rem 1fr 42rem
+    align-items: end
+    gap: $space-3xl
+    width: 100%
+    padding: 0 0 4.4rem
+
+  &__left
+    align-self: end
+    padding-bottom: 0.6rem
+
+    a
+      display: block
+      text-decoration: none
+      font-size: $fs-sm
+      line-height: 1.08
+      font-family: $font-body
+
+  &__center
+    justify-self: center
+    align-self: center
+    font-size: clamp(4.8rem, 4.2vw, 8.4rem)
+    font-weight: 800
+    line-height: .9
+    font-family: $font-heading
+
+  &__right
+    display: grid
+    grid-template-columns: 1fr
+    gap: 2.8rem
+    justify-items: start
+    align-self: center
+
+    h2
+      margin: 0 0 1rem
+      font-size: clamp(3rem, 2.2vw, 4.8rem)
+      line-height: .92
+      font-weight: 700
+
+    a,
+    p
+      display: block
+      text-decoration: none
+      font-size: $fs-lg
+      line-height: 1.12
+      margin: 0
+      font-family: $font-body
+
+@media (max-width: $x-large)
+  .container
+    width: min(100%, calc(100% - 4rem))
+
+  .header
+    &__inner
+      grid-template-columns: 5.2rem 1fr auto 4rem
+      min-height: 9rem
+
+    &__nav--right
+      display: none
+
+    &__logo
+      justify-self: end
+
+      span
+        font-size: 9.2rem
+
+  .hero
+    &__grid
+      grid-template-columns: 1fr
+      min-height: auto
+
+    &__photo
+      min-height: 52rem
+      max-height: none
+      border-right: 0
+      border-bottom: $border
+
+      img
+        object-fit: cover
+
+    &__content
+      min-height: auto
+      max-height: none
+      padding: 2.8rem 2rem 3.2rem
+
+      h1
+        margin-bottom: 2.8rem
+
+  .founder
+    &__card
+      right: 3.6rem
+      top: 18rem
+
+  .skills
+    &__inner
+      grid-template-columns: 1fr
+
+    &__content
+      h2,
+      p
+        text-align: left
+
+      p
+        margin: 0 0 2.4rem
+
+      small
+        margin-left: 0
+
+  .works
+    &__grid
+      width: 100%
+      grid-template-columns: repeat(2, 1fr)
+      grid-template-areas: "a b" "c d" "e f"
+
+    &__item
+      min-height: 32rem !important
+
+  .booking
+    &__grid
+      grid-template-columns: 1fr
+      gap: 3rem
+
+    &__dragon img
+      max-width: 30rem
+
+  .promo
+    &__inner
+      width: auto
+      margin-left: 0
+      grid-template-columns: 1fr
+
+    &__image
+      max-width: none
+
+    &__card
+      position: relative
+      left: auto
+      top: auto
+      margin: -4.8rem 0 0 auto
+      width: min(100%, 42rem)
+
+  .footer
+    &__inner
+      grid-template-columns: 1fr
+      gap: $space-xl
+
+    &__left
+      order: 3
+
+    &__center
+      order: 2
+      justify-self: start
+
+    &__right
+      order: 1
+      align-self: end
+
+@media (max-width: $medium)
+  .container
+    width: calc(100% - 2.4rem)
+
+  .header
+    &__inner
+      grid-template-columns: 4rem 1fr auto 3.4rem
+      gap: $space-sm
+      min-height: 7.6rem
+
+    &__nav
+      display: none
+
+    &__logo
+      justify-self: end
+
+      span
+        font-size: 6.4rem
+
+      small
+        font-size: $fs-md
+
+    &__close
+      font-size: $fs-2xl
+
+  .hero
+    &__grid
+      min-height: auto
+
+    &__photo
+      min-height: 38rem
+      max-height: none
+
+      img
+        object-fit: cover
+
+    &__content
+      min-height: auto
+      max-height: none
+
+      h1
+        font-size: $fs-4xl
+
+  .statement
+    padding: 7rem 0
+
+    h2
+      font-size: $fs-2xl
+
+    p
+      margin-top: 3.2rem
+
+  .founder
+    &__inner
+      min-height: 62rem
+
+    &__title
+      padding: $space-xl 0 0 1.6rem
+      font-size: $fs-3xl
+
+    &__card
+      position: relative
+      top: auto
+      right: auto
+      margin: 14rem 1.2rem 0 auto
+      width: calc(100% - 2.4rem)
+
+    &__bottom
+      left: 50%
+      right: auto
+      transform: translateX(-50%)
+      bottom: 1.6rem
+      font-size: $fs-2xl
+      white-space: normal
+      text-align: center
+
+  .features
+    &__grid
+      grid-template-columns: 1fr
+
+    &__visual
+      border-right: 0
+      border-bottom: $border
+
+  .masters
+    &__grid
+      grid-template-columns: 1fr
+      gap: $space-md
+
+    &__card
+      &:nth-child(2) .masters__role,
+      &:nth-child(3) .masters__role
+        text-align: left
+
+  .skills
+    &__art img
+      max-width: 100%
+
+    &__content
+      padding-top: 0
+
+      h2
+        font-size: $fs-3xl
+
+      p,
+      small
+        font-size: 1.5rem
+
+  .works
+    &__grid
+      grid-template-columns: 1fr
+      grid-template-areas: none
+
+    &__item
+      min-height: 26rem !important
+
+  .calendar-box
+    width: 100%
+
+  .booking
+    &__bottom
+      flex-direction: column
+      align-items: flex-start
+
+  .promo
+    &__card
+      width: 100%
+      margin-top: 1.6rem
+
+      &::before
+        left: 1.8rem
+        top: -2.2rem
+        transform: none
+
+  .certs
+    min-height: auto
+    padding: $space-3xl 0
+
+    &__inner
+      min-height: auto
+      display: flex
+      flex-direction: column
+      gap: 2.8rem
+
+    &__title
+      position: relative
+      left: auto
+      top: auto
+      transform: none
+      margin: 0 auto 0.8rem
+      width: fit-content
+      font-size: 2.4rem
+      padding: $space-xs 2rem
+
+    &__badge
+      position: relative !important
+      left: auto !important
+      right: auto !important
+      top: auto !important
+      bottom: auto !important
+      justify-content: space-between
+      align-items: center
+      gap: 1.4rem
+
+    &__badge--top,
+    &__badge--right
+      .certs__image,
+      .certs__meta
+        order: 0
+
+    &__image
+      max-width: 14rem
+
+    &__meta
+      span
+        width: 4.6rem
+        height: 4.6rem
+        font-size: $fs-lg
+
+      strong
+        font-size: 3.2rem
+
+      small
+        font-size: 1.5rem
+
+  .reviews
+    &__grid
+      grid-template-columns: 1fr
+      gap: $space-md
+
+  .review:nth-child(2)
+    transform: none
+
+  .footer
+    min-height: 52rem
+
+    &__inner
+      padding-bottom: 2.4rem
+
+    &__center
+      font-size: $fs-4xl
+
+    &__right
+      h2
+        font-size: 2.6rem
+
+      a,
+      p
+        font-size: 1.5rem
