@@ -441,70 +441,7 @@ const works = [
 
 
 
-      <section class="booking" id="booking" aria-labelledby="booking-title">
-        <div class="container">
-          <h2 class="section-title section-title--form" id="booking-title">ФОРМА ЗАПИСИ</h2>
-
-          <div class="booking__grid">
-            <figure class="booking__dragon">
-              <img :src="dragon" alt="Декоративный дракон" />
-            </figure>
-
-            <form class="booking__form">
-              <fieldset class="booking__fieldset">
-                <legend class="field-select">МАСТЕР</legend>
-
-                <div class="booking__radio-group booking__radio-group--masters">
-                  <label><input type="radio" name="level" /> <span>Стажер</span></label>
-                  <label><input type="radio" name="level" checked /> <span>Специалист</span></label>
-                  <label><input type="radio" name="level" /> <span>Профи</span></label>
-                </div>
-              </fieldset>
-
-              <div class="booking__avatars" aria-label="Список мастеров">
-                <div>Миша</div>
-                <div>Олег</div>
-                <div>Саша</div>
-                <div>Эля</div>
-              </div>
-
-              <fieldset class="booking__fieldset">
-                <legend class="field-select">ДАТА</legend>
-
-                <div class="calendar-box" aria-label="Календарь">
-                  <div class="calendar-box__head">
-                    <span>APRIL 2024</span>
-                    <span>‹ ›</span>
-                  </div>
-                  <div class="calendar-box__grid">
-                    <span v-for="n in 35" :key="n">{{ n <= 30 ? n : '' }}</span>
-                  </div>
-                </div>
-              </fieldset>
-
-              <fieldset class="booking__fieldset">
-                <legend class="field-select">ВИД ТАТУ</legend>
-
-                <div class="booking__radio-group booking__radio-group--types">
-                  <label><input type="radio" name="type" /> <span>Мини тату</span></label>
-                  <label><input type="radio" name="type" /> <span>Эксклюзивные</span></label>
-                  <label><input type="radio" name="type" checked /> <span>Тату хэнд</span></label>
-                  <label><input type="radio" name="type" /> <span>Тату машинкой</span></label>
-                  <label><input type="radio" name="type" /> <span>Хендпоук</span></label>
-                  <label><input type="radio" name="type" /> <span>Шрамирование</span></label>
-                </div>
-              </fieldset>
-
-              <div class="field-select">СТОИМОСТЬ</div>
-
-              <div class="booking__bottom">
-                <strong>8.990р</strong>
-                <button type="submit" class="btn-outline">ЗАПИСАТЬСЯ</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </section>
+      
 
       <section class="promo" id="promo" aria-labelledby="promo-title">
         <div class="container promo__inner">
