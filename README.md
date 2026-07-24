@@ -1,33 +1,25 @@
-# tattoo
+# Skin Tattoo
 
-## Recommended IDE Setup
+Сайт тату-студии на Vue 3 с адаптивной версткой, страницами мастеров, работ, отзывов и формой записи.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Демо
 
-## Customize configuration
+https://mariannadtd.github.io/skin-tattoo/
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+## Что реализовано
 
-## Project Setup
+- многостраничная навигация через Vue Router;
+- страницы о студии, мастеров, работ, акций, сертификатов, отзывов и контактов;
+- форма записи с выбором мастера, даты, времени, типа тату и валидацией;
+- уведомление после успешной записи;
+- адаптивная верстка и слайдеры.
+
+## Стек
+
+Vue 3, Vite, Vue Router, Pinia, Sass, ESLint, Prettier.
+
+## Запуск
 
 ```sh
 npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
 npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
