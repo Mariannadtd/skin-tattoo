@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import dragon from '../assets/img/dragon.png'
 
 const props = defineProps({
@@ -14,10 +14,14 @@ const selectedPerson = ref(props.masters[0]?.list[0]?.name || '')
 const selectedType = ref('')
 const selectedDuration = ref('')
 const selectedTime = ref('')
+const clientName = ref('')
 const isSubmitted = ref(false)
+const isThankYouVisible = ref(false)
 
 const openSection = ref('master')
 const isDurationOpen = ref(false)
+const isSubmitAttempted = ref(false)
+let thankYouTimer = null
 
 const selectedGroup = computed(() => {
   return props.masters.find((group) => group.role === selectedRole.value)
@@ -101,6 +105,86 @@ const selectedDurationData = computed(() => {
   return selectedTypeData.value.durations.find((item) => item.value === selectedDuration.value)
 })
 
+const normalizedClientName = computed(() => {
+  return clientName.value.trim().replace(/\s+/g, ' ')
+})
+
+const todayStart = computed(() => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  return today
+})
+
+const currentMonthStart = computed(() => {
+  return new Date(currentDate.value.getFullYear(), currentDate.value.getMonth(), 1)
+})
+
+const canGoPrevMonth = computed(() => {
+  const todayMonth = new Date(todayStart.value.getFullYear(), todayStart.value.getMonth(), 1)
+  return currentMonthStart.value > todayMonth
+})
+
+const normalizeDate = (date) => {
+  if (!date) return null
+
+  const normalizedDate = new Date(date)
+  normalizedDate.setHours(0, 0, 0, 0)
+  return normalizedDate
+}
+
+const isPastDate = (date) => {
+  const normalizedDate = normalizeDate(date)
+  return Boolean(normalizedDate && normalizedDate < todayStart.value)
+}
+
+const validationErrors = computed(() => {
+  const errors = {}
+
+  if (!normalizedClientName.value) {
+    errors.name = 'Введите имя'
+  }
+
+  if (!selectedRole.value || !selectedPerson.value) {
+    errors.master = 'Выберите мастера'
+  }
+
+  if (!selectedDate.value) {
+    errors.date = 'Выберите дату'
+  } else if (isPastDate(selectedDate.value)) {
+    errors.date = 'Нельзя выбрать прошедшую дату'
+  }
+
+  if (!selectedTime.value) {
+    errors.time = 'Выберите время'
+  }
+
+  if (!selectedType.value) {
+    errors.type = 'Выберите вид тату'
+  }
+
+  if (
+    selectedTypeData.value &&
+    selectedTypeData.value.value !== 'mini' &&
+    !selectedDuration.value
+  ) {
+    errors.duration = 'Выберите длительность сеанса'
+  }
+
+  return errors
+})
+
+const visibleErrors = computed(() => {
+  return isSubmitAttempted.value ? validationErrors.value : {}
+})
+
+const errorList = computed(() => {
+  return Object.values(visibleErrors.value)
+})
+
+const hasValidationErrors = computed(() => {
+  return Object.keys(validationErrors.value).length > 0
+})
+
 const formattedPrice = computed(() => {
   if (!selectedTypeData.value) return '0р'
 
@@ -147,9 +231,19 @@ const timeOptions = [
 const currentDate = ref(new Date())
 const selectedDate = ref(new Date())
 
-watch([selectedRole, selectedPerson, selectedType, selectedDuration, selectedTime, selectedDate], () => {
-  isSubmitted.value = false
-})
+const clearThankYouTimer = () => {
+  clearTimeout(thankYouTimer)
+  thankYouTimer = null
+}
+
+watch(
+  [clientName, selectedRole, selectedPerson, selectedType, selectedDuration, selectedTime, selectedDate],
+  () => {
+    isSubmitted.value = false
+    isThankYouVisible.value = false
+    clearThankYouTimer()
+  }
+)
 
 const currentMonthLabel = computed(() => {
   const month = currentDate.value.getMonth()
@@ -215,6 +309,8 @@ const formattedSelectedDate = computed(() => {
 })
 
 const prevMonth = () => {
+  if (!canGoPrevMonth.value) return
+
   currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() - 1, 1)
 }
 
@@ -223,7 +319,8 @@ const nextMonth = () => {
 }
 
 const selectDate = (date) => {
-  if (!date) return
+  if (!date || isPastDate(date)) return
+
   selectedDate.value = date
   isSubmitted.value = false
 }
@@ -257,9 +354,41 @@ const selectTattooType = (typeValue) => {
   isDurationOpen.value = true
 }
 
-const submitBooking = () => {
-  isSubmitted.value = true
+const closeThankYou = () => {
+  clearThankYouTimer()
+  isThankYouVisible.value = false
 }
+
+const showThankYou = () => {
+  clearThankYouTimer()
+  isThankYouVisible.value = true
+  thankYouTimer = setTimeout(closeThankYou, 7000)
+}
+
+const submitBooking = () => {
+  isSubmitAttempted.value = true
+  isSubmitted.value = false
+
+  if (hasValidationErrors.value) {
+    if (validationErrors.value.master) {
+      openSection.value = 'master'
+    } else if (validationErrors.value.date || validationErrors.value.time) {
+      openSection.value = 'date'
+    } else {
+      openSection.value = 'type'
+      isDurationOpen.value = Boolean(validationErrors.value.duration)
+    }
+
+    return
+  }
+
+  isSubmitted.value = true
+  showThankYou()
+}
+
+onBeforeUnmount(() => {
+  clearThankYouTimer()
+})
 </script>
 
 <template>
@@ -272,12 +401,44 @@ const submitBooking = () => {
           <img :src="dragon" alt="Декоративный дракон" />
         </figure>
 
-        <form class="booking__form" @submit.prevent="submitBooking">
+        <form class="booking__form" novalidate @submit.prevent="submitBooking">
+          <div v-if="errorList.length" class="booking__errors" role="alert">
+            <strong>Проверьте поля</strong>
+            <ul>
+              <li v-for="error in errorList" :key="error">{{ error }}</li>
+            </ul>
+          </div>
+
+          <div class="booking__section">
+            <label class="booking__field" :class="{ 'booking__field--error': visibleErrors.name }">
+              <span>ИМЯ</span>
+              <input
+                id="booking-client-name"
+                v-model="clientName"
+                type="text"
+                name="clientName"
+                autocomplete="name"
+                placeholder="Ваше имя"
+                :aria-invalid="Boolean(visibleErrors.name)"
+                :aria-describedby="visibleErrors.name ? 'booking-name-error' : undefined"
+              />
+            </label>
+
+            <p v-if="visibleErrors.name" id="booking-name-error" class="booking__error">
+              {{ visibleErrors.name }}
+            </p>
+          </div>
+
           <div class="booking__section">
             <button
               type="button"
               class="field-select"
-              :class="{ 'field-select--open': openSection === 'master' }"
+              :class="{
+                'field-select--open': openSection === 'master',
+                'field-select--error': visibleErrors.master
+              }"
+              :aria-invalid="Boolean(visibleErrors.master)"
+              :aria-describedby="visibleErrors.master ? 'booking-master-error' : undefined"
               @click="toggleSection('master')"
             >
               <span>МАСТЕР</span>
@@ -317,13 +478,29 @@ const submitBooking = () => {
                 </label>
               </div>
             </div>
+
+            <p v-if="visibleErrors.master" id="booking-master-error" class="booking__error">
+              {{ visibleErrors.master }}
+            </p>
           </div>
 
           <div class="booking__section">
             <button
               type="button"
               class="field-select"
-              :class="{ 'field-select--open': openSection === 'date' }"
+              :class="{
+                'field-select--open': openSection === 'date',
+                'field-select--error': visibleErrors.date || visibleErrors.time
+              }"
+              :aria-invalid="Boolean(visibleErrors.date || visibleErrors.time)"
+              :aria-describedby="
+                [
+                  visibleErrors.date ? 'booking-date-error' : '',
+                  visibleErrors.time ? 'booking-time-error' : ''
+                ]
+                  .filter(Boolean)
+                  .join(' ') || undefined
+              "
               @click="toggleSection('date')"
             >
               <span>{{ formattedSelectedDate }}</span>
@@ -333,9 +510,24 @@ const submitBooking = () => {
               <div class="booking__datetime">
                 <div class="calendar-box" aria-label="Календарь">
                   <div class="calendar-box__head">
-                    <button type="button" class="calendar-box__nav" @click="prevMonth">‹</button>
+                    <button
+                      type="button"
+                      class="calendar-box__nav"
+                      :disabled="!canGoPrevMonth"
+                      aria-label="Предыдущий месяц"
+                      @click="prevMonth"
+                    >
+                      ‹
+                    </button>
                     <span>{{ currentMonthLabel }}</span>
-                    <button type="button" class="calendar-box__nav" @click="nextMonth">›</button>
+                    <button
+                      type="button"
+                      class="calendar-box__nav"
+                      aria-label="Следующий месяц"
+                      @click="nextMonth"
+                    >
+                      ›
+                    </button>
                   </div>
 
                   <div class="calendar-box__weekdays">
@@ -350,9 +542,10 @@ const submitBooking = () => {
                       class="calendar-box__day"
                       :class="{
                         'calendar-box__day--empty': !item.day,
-                        'calendar-box__day--selected': isSelectedDate(item.fullDate)
+                        'calendar-box__day--selected': isSelectedDate(item.fullDate),
+                        'calendar-box__day--disabled': isPastDate(item.fullDate)
                       }"
-                      :disabled="!item.day"
+                      :disabled="!item.day || isPastDate(item.fullDate)"
                       @click="selectDate(item.fullDate)"
                     >
                       {{ item.day }}
@@ -372,13 +565,25 @@ const submitBooking = () => {
                 </div>
               </div>
             </div>
+
+            <p v-if="visibleErrors.date" id="booking-date-error" class="booking__error">
+              {{ visibleErrors.date }}
+            </p>
+            <p v-if="visibleErrors.time" id="booking-time-error" class="booking__error">
+              {{ visibleErrors.time }}
+            </p>
           </div>
 
           <div class="booking__section">
             <button
               type="button"
               class="field-select"
-              :class="{ 'field-select--open': openSection === 'type' }"
+              :class="{
+                'field-select--open': openSection === 'type',
+                'field-select--error': visibleErrors.type
+              }"
+              :aria-invalid="Boolean(visibleErrors.type)"
+              :aria-describedby="visibleErrors.type ? 'booking-type-error' : undefined"
               @click="toggleSection('type')"
             >
               <span>ВИД ТАТУ</span>
@@ -405,7 +610,12 @@ const submitBooking = () => {
                 <button
                   type="button"
                   class="field-select"
-                  :class="{ 'field-select--open': isDurationOpen }"
+                  :class="{
+                    'field-select--open': isDurationOpen,
+                    'field-select--error': visibleErrors.duration
+                  }"
+                  :aria-invalid="Boolean(visibleErrors.duration)"
+                  :aria-describedby="visibleErrors.duration ? 'booking-duration-error' : undefined"
                   @click="isDurationOpen = !isDurationOpen"
                 >
                   <span>{{ selectedDurationData ? selectedDurationData.label : 'ВРЕМЯ' }}</span>
@@ -430,8 +640,20 @@ const submitBooking = () => {
                     </label>
                   </div>
                 </div>
+
+                <p
+                  v-if="visibleErrors.duration"
+                  id="booking-duration-error"
+                  class="booking__error"
+                >
+                  {{ visibleErrors.duration }}
+                </p>
               </div>
             </div>
+
+            <p v-if="visibleErrors.type" id="booking-type-error" class="booking__error">
+              {{ visibleErrors.type }}
+            </p>
           </div>
 
           <div class="field-select field-select--static booking__price-title">СТОИМОСТЬ</div>
@@ -445,6 +667,21 @@ const submitBooking = () => {
             Заявка подготовлена. Для подтверждения записи свяжитесь со студией.
           </p>
         </form>
+
+        <Transition name="booking-thanks">
+          <div
+            v-if="isThankYouVisible"
+            class="booking__thanks"
+            role="status"
+            aria-live="polite"
+          >
+            <button type="button" aria-label="Закрыть окно благодарности" @click="closeThankYou">
+              ×
+            </button>
+            <strong>Спасибо за запись, {{ normalizedClientName }}!</strong>
+            <span>Мы приняли заявку и скоро свяжемся для подтверждения.</span>
+          </div>
+        </Transition>
       </div>
     </div>
   </section>
@@ -471,6 +708,65 @@ const submitBooking = () => {
     border: $border
     padding: 2.8rem 2.8rem 3.4rem
     background: var(--card)
+
+  &__errors
+    margin: 0 0 1.8rem
+    padding: 1.4rem 1.6rem
+    border: 0.1rem solid #d43f3a
+    color: #d43f3a
+    font-family: $font-body
+    font-size: $fs-xs
+    line-height: 1.2
+
+    strong
+      display: block
+      margin-bottom: .8rem
+      font-family: $font-heading
+      font-size: $fs-sm
+      line-height: 1
+
+    ul
+      display: grid
+      gap: .4rem
+      margin: 0
+      padding: 0
+      list-style: none
+
+  &__field
+    display: grid
+    gap: .8rem
+    font-family: $font-heading
+    font-size: $fs-md
+    line-height: 1
+
+    span
+      display: block
+
+    input
+      width: 100%
+      min-height: 5.8rem
+      border: $border
+      background: transparent
+      color: $text
+      padding: 0 1.8rem
+      font-family: $font-body
+      font-size: $fs-md
+      line-height: 1
+      outline: none
+
+      &::placeholder
+        color: rgba(29, 57, 216, .45)
+
+      &:focus
+        outline: 0.2rem solid rgba(29, 57, 216, .18)
+        outline-offset: 0.2rem
+
+    &--error
+      color: #d43f3a
+
+      input
+        border-color: #d43f3a
+        color: #d43f3a
 
   &__section
     margin-bottom: 1.8rem
@@ -580,6 +876,58 @@ const submitBooking = () => {
     line-height: 1.2
     font-family: $font-body
 
+  &__error
+    margin: .8rem 0 0
+    color: #d43f3a
+    font-size: $fs-xs
+    line-height: 1.2
+    font-family: $font-body
+
+  &__thanks
+    position: fixed
+    right: 2.4rem
+    bottom: 2.4rem
+    z-index: 50
+    width: min(38rem, calc(100% - 2.4rem))
+    border: $border
+    background: var(--card-strong)
+    color: $text
+    padding: 2rem 4.8rem 2rem 2rem
+    display: grid
+    gap: .8rem
+    box-shadow: 0 1.4rem 3.2rem rgba(29, 57, 216, .18)
+    font-family: $font-body
+
+    button
+      position: absolute
+      top: .8rem
+      right: .8rem
+      width: 3.2rem
+      height: 3.2rem
+      border: $border
+      border-radius: $radius-full
+      color: inherit
+      font-size: 2rem
+      line-height: 1
+
+    strong
+      font-family: $font-heading
+      font-size: $fs-lg
+      line-height: 1
+
+    span
+      font-size: $fs-xs
+      line-height: 1.2
+
+.booking-thanks-enter-active,
+.booking-thanks-leave-active
+  transition: opacity .25s ease, transform .25s ease
+
+.booking-thanks-enter-from,
+.booking-thanks-leave-to
+  opacity: 0
+  transform: translateY(1.2rem)
+
 .field-select
   min-height: 5.8rem
   border: $border
@@ -603,6 +951,10 @@ const submitBooking = () => {
 
   &--open::after
     transform: rotate(180deg)
+
+  &--error
+    border-color: #d43f3a
+    color: #d43f3a
 
   &--static
     cursor: default
@@ -633,6 +985,10 @@ const submitBooking = () => {
     cursor: pointer
     font-size: 1.6rem
     line-height: 1
+
+    &:disabled
+      opacity: .35
+      cursor: default
 
   &__weekdays
     display: grid
@@ -670,6 +1026,10 @@ const submitBooking = () => {
     &--selected
       background: $text
       color: #fff
+
+    &--disabled
+      opacity: .35
+      cursor: default
 
 .time-box
   border: $border
