@@ -141,4 +141,43 @@ import founderBg from '../assets/img/founder-bg.jpg'
     font-weight: 700
     line-height: .94
     white-space: nowrap
+
+@media (max-width: 768px)
+  .statement
+    padding: 6rem 0
+
+    h2
+      font-size: clamp(2.8rem, 8vw, 4.2rem)
+      line-height: 1.02
+
+      br
+        display: none
+
+    &-par
+      padding-top: 3.2rem
+
+  .founder
+    &__inner
+      min-height: auto
+      padding-bottom: 3rem
+
+    &__title
+      padding: 3rem 1.2rem 0
+      font-size: clamp(3.8rem, 11vw, 5.8rem)
+
+    &__card
+      position: relative
+      top: auto
+      right: auto
+      width: calc(100% - 2.4rem)
+      margin: 17rem auto 0
+      padding: 1.8rem 1.4rem
+
+      p
+        font-size: 1.5rem
+
+@media (max-width: 576px)
+  .founder
+    &__card
+      margin-top: 12rem
 </style>

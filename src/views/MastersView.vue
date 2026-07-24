@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import scribble from '../assets/img/scribble.png'
 
-const props = defineProps({
+defineProps({
   masters: {
     type: Array,
     required: true
@@ -243,4 +243,80 @@ const closeMastersList = () => {
       line-height: 1.12
       margin-left: 2.2rem
       font-family: $font-body
+
+@media (max-width: 1200px)
+  .masters
+    &__grid
+      grid-template-columns: repeat(2, 1fr)
+
+  .skills
+    &__inner
+      grid-template-columns: 1fr
+
+    &__art
+      img
+        max-width: min(100%, 42rem)
+
+    &__content
+      padding-top: 0
+
+      h2,
+      p
+        text-align: left
+
+      p
+        margin: 0 0 2.4rem
+
+      small
+        margin-left: 0
+
+@media (max-width: 768px)
+  .masters
+    padding-bottom: 4.8rem
+
+    .section-title--huge
+      margin-bottom: 3rem
+      font-size: clamp(4.8rem, 18vw, 8rem)
+
+    &__grid
+      grid-template-columns: 1fr
+      gap: 2.4rem
+
+    &__card
+      &:nth-child(2) .masters__role,
+      &:nth-child(3) .masters__role
+        text-align: left
+
+    &__arrow
+      top: 1.2rem
+      right: 1.2rem
+      width: 4.2rem
+      height: 4.2rem
+
+    &__list
+      padding: 6.4rem 1.2rem 1.2rem
+
+    &__person
+      grid-template-columns: 7rem 1fr
+
+    &__avatar
+      width: 7rem
+      height: 7rem
+
+    &__name
+      font-size: 1.8rem
+
+    &__bio
+      font-size: 1.3rem
+
+  .skills
+    padding: 3.6rem 0 4.8rem
+
+    &__content
+      h2
+        font-size: clamp(3rem, 10vw, 4.8rem)
+
+      p,
+      small
+        font-size: 1.5rem
 </style>

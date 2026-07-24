@@ -1,5 +1,6 @@
 <script setup>
-import { RouterView } from 'vue-router'
+import { computed } from 'vue'
+import { RouterView, useRoute } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
 
 import firstMaster from './assets/img/first-master.jpg'
@@ -40,12 +41,15 @@ const navLeft = [
 
 const navRight = [
   { to: '/promo', label: 'Акции' },
+  { to: '/certificates', label: 'Сертификаты' },
   { to: '/booking', label: 'Запись' },
   { to: '/reviews', label: 'Отзывы' },
   { to: '/contacts', label: 'Контакты' }
 ]
 
-let features = [
+const route = useRoute()
+
+const features = [
   {
     number: '01',
     title: 'Стилистика работ',
@@ -276,6 +280,20 @@ const works = [
   }
 ]
 
+const routeProps = computed(() => {
+  switch (route.name) {
+    case 'principles':
+      return { features }
+    case 'masters':
+    case 'booking':
+      return { masters }
+    case 'works':
+      return { works }
+    default:
+      return {}
+  }
+})
+
 // const certs = [
 //   {
 //     number: '01',
@@ -326,7 +344,7 @@ const works = [
   <div class="page">
     <AppHeader :nav-left="navLeft" :nav-right="navRight" />
     <RouterView v-slot="{ Component }">
-      <component :is="Component" :features="features" :masters="masters" :works="works" />
+      <component :is="Component" v-bind="routeProps" />
     </RouterView>
 
     <!-- <main>

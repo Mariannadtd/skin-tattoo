@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import dragon from '../assets/img/dragon.png'
 
 const props = defineProps({
@@ -14,6 +14,7 @@ const selectedPerson = ref(props.masters[0]?.list[0]?.name || '')
 const selectedType = ref('')
 const selectedDuration = ref('')
 const selectedTime = ref('')
+const isSubmitted = ref(false)
 
 const openSection = ref('master')
 const isDurationOpen = ref(false)
@@ -146,6 +147,10 @@ const timeOptions = [
 const currentDate = ref(new Date())
 const selectedDate = ref(new Date())
 
+watch([selectedRole, selectedPerson, selectedType, selectedDuration, selectedTime, selectedDate], () => {
+  isSubmitted.value = false
+})
+
 const currentMonthLabel = computed(() => {
   const month = currentDate.value.getMonth()
   const year = currentDate.value.getFullYear()
@@ -220,6 +225,7 @@ const nextMonth = () => {
 const selectDate = (date) => {
   if (!date) return
   selectedDate.value = date
+  isSubmitted.value = false
 }
 
 const isSelectedDate = (date) => {
@@ -239,6 +245,7 @@ const toggleSection = (section) => {
 const selectTattooType = (typeValue) => {
   selectedType.value = typeValue
   selectedDuration.value = ''
+  isSubmitted.value = false
 
   const currentType = tattooTypes.find((item) => item.value === typeValue)
 
@@ -248,6 +255,10 @@ const selectTattooType = (typeValue) => {
   }
 
   isDurationOpen.value = true
+}
+
+const submitBooking = () => {
+  isSubmitted.value = true
 }
 </script>
 
@@ -261,7 +272,7 @@ const selectTattooType = (typeValue) => {
           <img :src="dragon" alt="Декоративный дракон" />
         </figure>
 
-        <form class="booking__form">
+        <form class="booking__form" @submit.prevent="submitBooking">
           <div class="booking__section">
             <button
               type="button"
@@ -429,6 +440,10 @@ const selectTattooType = (typeValue) => {
             <strong>{{ formattedPrice }}</strong>
             <button type="submit" class="btn-outline">ЗАПИСАТЬСЯ</button>
           </div>
+
+          <p v-if="isSubmitted" class="booking__status" role="status">
+            Заявка подготовлена. Для подтверждения записи свяжитесь со студией.
+          </p>
         </form>
       </div>
     </div>
@@ -558,6 +573,12 @@ const selectTattooType = (typeValue) => {
       line-height: 1
       font-weight: 800
       font-family: $font-heading
+
+  &__status
+    margin: 1.6rem 0 0
+    font-size: $fs-xs
+    line-height: 1.2
+    font-family: $font-body
 
 .field-select
   min-height: 5.8rem
@@ -707,4 +728,52 @@ const selectTattooType = (typeValue) => {
 
   .calendar-box
     width: 100%
+
+@media (max-width: 576px)
+  .booking
+    padding-bottom: 5rem
+
+    &__form
+      padding: 1.6rem
+
+    &__radio-group
+      gap: 1.2rem 1.8rem
+
+      label
+        font-size: $fs-2xs
+
+    &__avatars
+      gap: 1.6rem 1.2rem
+
+    &__avatar-card
+      img
+        width: 6.8rem
+        height: 6.8rem
+
+    &__bottom
+      gap: 1.6rem
+
+      strong
+        font-size: 3.4rem
+
+  .field-select
+    min-height: 5.2rem
+    padding: 0 1.2rem
+    font-size: $fs-sm
+
+  .calendar-box
+    padding: 1rem
+
+    &__head
+      gap: .6rem
+
+    &__weekdays,
+    &__grid
+      gap: .4rem
+
+  .time-box
+    padding: 1rem
+
+    &__list
+      grid-template-columns: 1fr
 </style>

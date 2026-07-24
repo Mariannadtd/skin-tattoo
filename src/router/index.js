@@ -35,9 +35,24 @@ const router = createRouter({
       component: () => import('../views/PromoView.vue')
     },
     {
+      path: '/certificates',
+      name: 'certificates',
+      component: () => import('../views/CertificatesView.vue')
+    },
+    {
       path: '/booking',
       name: 'booking',
       component: () => import('../views/BookingView.vue')
+    },
+    {
+      path: '/reviews',
+      name: 'reviews',
+      component: () => import('../views/ReviewsView.vue')
+    },
+    {
+      path: '/contacts',
+      name: 'contacts',
+      component: () => import('../views/ContactsView.vue')
     }
   ],
   scrollBehavior() {
